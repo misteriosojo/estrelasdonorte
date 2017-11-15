@@ -1,5 +1,6 @@
 package com.crypted2.estrelasdonorte;
 
+import com.crypted2.estrelasdonorte.database.DbConnector;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -14,6 +15,9 @@ public class Launcher extends Application {
         primaryStage.setTitle("Estrelas do Norte - Manager");
         primaryStage.setScene(new Scene(root, 900, 600));
         primaryStage.show();
+
+        DbConnector dbConnector = new DbConnector();
+        dbConnector.getConnection();
     }
 
 
