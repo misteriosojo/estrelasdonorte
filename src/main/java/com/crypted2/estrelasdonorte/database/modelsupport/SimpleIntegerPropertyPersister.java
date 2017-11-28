@@ -28,8 +28,7 @@ public class SimpleIntegerPropertyPersister extends BaseDataType {
 
     @Override
     public Object resultToSqlArg(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
-        int resultsInt = results.getInt(columnPos);
-        return resultsInt;
+        return results.getInt(columnPos);
     }
 
     @Override

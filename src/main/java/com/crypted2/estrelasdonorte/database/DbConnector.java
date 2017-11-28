@@ -1,6 +1,7 @@
 package com.crypted2.estrelasdonorte.database;
 
 import com.crypted2.estrelasdonorte.model.Music;
+import com.crypted2.estrelasdonorte.model.MusicGenre;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
@@ -9,10 +10,15 @@ import com.j256.ormlite.table.TableUtils;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Class used to connect to the database
@@ -23,6 +29,7 @@ import java.sql.SQLException;
  * http://ormlite.com/sqlite_java_android_orm.shtml
  */
 public class DbConnector {
+    private Logger logger = LoggerFactory.getLogger(DbConnector.class);
 
     private Connection connection;
 
@@ -32,36 +39,40 @@ public class DbConnector {
 
     public void getConnection() throws SQLException, IOException {
         // this uses h2 but you can change it to match your database
-        String databaseUrl = "jdbc:sqlite:";
+        String databaseUrl = "jdbc:sqlite:sample.db";
 // create a connection source to our database
         ConnectionSource connectionSource =
                 new JdbcConnectionSource(databaseUrl);
 
-// instantiate the DAO to handle Account with String id
-        Dao<Music, StringProperty> accountDao =
+// instantiate the DAO to handle Account with Integer id
+        Dao<Music, Integer> accountDao =
                 DaoManager.createDao(connectionSource, Music.class);
 
 // if you need to create the 'accounts' table make this call
-        TableUtils.createTable(connectionSource, Music.class);
+        TableUtils.createTableIfNotExists(connectionSource, Music.class);
 
 // create an instance of Account
         Music account = new Music(
-                new SimpleStringProperty("A Cabritinha"),
-                new SimpleStringProperty("Quim Barrieros"),
-                new SimpleStringProperty("Zé Carlos"),
-//                MusicGenre.PIMBA,
-                new SimpleStringProperty("PIMBA"),
-                new SimpleIntegerProperty(138),
-                new SimpleIntegerProperty(-1),
-                new SimpleStringProperty("LoL"));
+                "A Cabritinha",
+                "Quim Barrieros",
+                MusicGenre.PIMBA.ordinal(),
+                "LoL");
 
 // persist the account object to the database
-        accountDao.create(account);
+        int id = accountDao.create(account);
 
 // retrieve the account
-        Music account2 = accountDao.queryForId(new SimpleStringProperty("A Cabritinha"));
+        Music account2 = accountDao.queryForId(id);
+
+        Map<String, Object> toQuery = new HashMap<String, Object>();
+        toQuery.put("title", "A Cabritinha");
+
+        List<Music> account3 = accountDao.queryForFieldValues(toQuery);
+        logger.debug("LIST FOUND: " + account3.size());
+        account3.forEach(m -> logger.debug("{}", m.getId()));
+
 // show its password
-        System.out.println("Account: " + account2.getAuthor());
+        logger.debug("Account: " + id + " --> " + account2.getAuthor());
 
 // close the connection source
         connectionSource.close();

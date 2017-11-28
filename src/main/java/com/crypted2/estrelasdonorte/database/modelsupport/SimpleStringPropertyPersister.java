@@ -27,8 +27,7 @@ public class SimpleStringPropertyPersister extends BaseDataType {
 
     @Override
     public Object resultToSqlArg(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
-        String resultsStr = results.getString(columnPos);
-        return resultsStr;
+        return results.getString(columnPos);
     }
 
     @Override
