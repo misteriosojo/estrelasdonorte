@@ -1,21 +1,18 @@
 package com.crypted2.estrelasdonorte.database;
 
-import com.crypted2.estrelasdonorte.model.Music;
-import com.crypted2.estrelasdonorte.model.MusicGenre;
+import com.crypted2.estrelasdonorte.EstrelasConfig;
+import com.crypted2.estrelasdonorte.model.*;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,38 +27,48 @@ import java.util.Map;
  */
 public class DbConnector {
     private Logger logger = LoggerFactory.getLogger(DbConnector.class);
+    private ConnectionSource connection;
 
-    private Connection connection;
+    private static List<Class<?>> createTableList = Arrays.asList(
+            LiveConcertMusic.class,
+            LiveConcertProgram.class,
+            Music.class,
+            UserProgram.class
+    );
 
     public DbConnector() {
 
     }
 
-    public void getConnection() throws SQLException, IOException {
-        // this uses h2 but you can change it to match your database
-        String databaseUrl = "jdbc:sqlite:sample.db";
-// create a connection source to our database
-        ConnectionSource connectionSource =
-                new JdbcConnectionSource(databaseUrl);
+    public void init() throws SQLException {
+        connection = new JdbcConnectionSource(EstrelasConfig.Database.URL);
+        createTables();
+    }
 
-// instantiate the DAO to handle Account with Integer id
-        Dao<Music, Integer> accountDao =
-                DaoManager.createDao(connectionSource, Music.class);
+    public ConnectionSource getConnection() {
+        return connection;
+    }
 
-// if you need to create the 'accounts' table make this call
-        TableUtils.createTableIfNotExists(connectionSource, Music.class);
+    public void closeConnection() throws IOException {
+        connection.close();
+    }
 
-// create an instance of Account
+    public void doStuff() throws SQLException {
+        // instantiate the DAO to handle Account with Integer id
+        Dao<Music, Integer> accountDao = DaoManager.createDao(connection, Music.class);
+
+        // create an instance of Account
         Music account = new Music(
                 "A Cabritinha",
                 "Quim Barrieros",
                 MusicGenre.PIMBA.ordinal(),
                 "LoL");
 
-// persist the account object to the database
-        int id = accountDao.create(account);
+        // persist the account object to the database
+        accountDao.create(account);
+        int id = account.getId();
 
-// retrieve the account
+        // retrieve the account
         Music account2 = accountDao.queryForId(id);
 
         Map<String, Object> toQuery = new HashMap<String, Object>();
@@ -71,60 +78,18 @@ public class DbConnector {
         logger.debug("LIST FOUND: " + account3.size());
         account3.forEach(m -> logger.debug("{}", m.getId()));
 
-// show its password
+        // show its password
         logger.debug("Account: " + id + " --> " + account2.getAuthor());
-
-// close the connection source
-        connectionSource.close();
     }
 
-//    public void getConnection() {
-//        try {
-//            // create a database connection
-//            connection = DriverManager.getConnection("jdbc:sqlite:sample.db");
-//            Statement statement = connection.createStatement();
-//            statement.setQueryTimeout(30);  // set timeout to 30 sec.
-//
-//            statement.executeUpdate("DROP TABLE IF EXISTS music");
-//            statement.executeUpdate("CREATE TABLE \"music\" (\n" +
-//                    "\"title\"  TEXT NOT NULL,\n" +
-//                    "\"author\"  TEXT,\n" +
-//                    "\"singer\"  TEXT,\n" +
-//                    "\"genre\"  TEXT,\n" +
-//                    "\"speed\"  INTEGER,\n" +
-//                    "\"transpose\"  INTEGER,\n" +
-//                    "\"pdfFileName\"  TEXT,\n" +
-//                    "PRIMARY KEY (\"title\")\n" +
-//                    ");");
-//
-//            statement.executeUpdate("INSERT INTO music VALUES(" +
-//                    "'A Cabritinha', " +
-//                    "'Quim Barreiros'," +
-//                    "'Zé'," +
-//                    "'PIMBA'," +
-//                    "141," +
-//                    "-1," +
-//                    "'Unknown'" +
-//                    ");");
-//
-//            ResultSet rs = statement.executeQuery("SELECT * FROM music");
-//            while (rs.next()) {
-//                // read the result set
-//                System.out.println("title = " + rs.getString("title"));
-//                System.out.println("author = " + rs.getInt("author"));
-//            }
-//        } catch (SQLException e) {
-//            // if the error message is "out of memory",
-//            // it probably means no database file is found
-//            System.err.println(e.getMessage());
-//        } finally {
-//            try {
-//                if (connection != null)
-//                    connection.close();
-//            } catch (SQLException e) {
-//                // connection close failed.
-//                System.err.println(e);
-//            }
-//        }
-//    }
+    private void createTables() {
+        createTableList.forEach(clazz -> {
+            try {
+                TableUtils.createTableIfNotExists(connection, clazz);
+            } catch (SQLException e) {
+                logger.error("Failed to create the table {}: {}", clazz.getSimpleName(), e.getMessage());
+            }
+        });
+
+    }
 }

@@ -17,6 +17,8 @@ public class LiveConcertMusic {
     private String singer = Singer.UNKNOWN.toString();
     @DatabaseField
     private int transpose;
+    @DatabaseField(foreign = true)
+    private LiveConcertProgram liveConcertProgram;
 
     LiveConcertMusic() {
 

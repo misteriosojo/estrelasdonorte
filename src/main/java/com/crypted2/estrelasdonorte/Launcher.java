@@ -17,7 +17,7 @@ public class Launcher extends Application {
         primaryStage.show();
 
         DbConnector dbConnector = new DbConnector();
-        dbConnector.getConnection();
+        dbConnector.init();
     }
 
 
