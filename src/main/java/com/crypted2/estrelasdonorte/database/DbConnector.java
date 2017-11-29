@@ -24,6 +24,8 @@ import java.util.Map;
  * https://github.com/xerial/sqlite-jdbc/blob/master/demo/Sample.java
  * <p>
  * http://ormlite.com/sqlite_java_android_orm.shtml
+ * <p>
+ * http://ormlite.com/javadoc/ormlite-core/doc-files/ormlite_2.html#GeneratedId-Column
  */
 public class DbConnector {
     private Logger logger = LoggerFactory.getLogger(DbConnector.class);
@@ -52,6 +54,30 @@ public class DbConnector {
     public void closeConnection() throws IOException {
         connection.close();
     }
+
+    private <T> Dao<T, Integer> getDao() {
+        return null; // ToDo this
+    }
+
+    /**
+     * Create (in CRUD)
+     * Insert a new object to the DB
+     *
+     * @param toCreate Object to create in the Database
+     * @return True if create successfully, Else otherwise
+     */
+    public <T> boolean create(T toCreate) {
+        try {
+            Dao<T, Integer> dao = DaoManager.createDao(connection, (Class<T>) toCreate.getClass());
+            dao.create(toCreate);
+        } catch (SQLException e) {
+            logger.error("Not possible to insert the record: {}", e.getMessage());
+            return false;
+        }
+
+        return true;
+    }
+
 
     public void doStuff() throws SQLException {
         // instantiate the DAO to handle Account with Integer id
@@ -82,6 +108,9 @@ public class DbConnector {
         logger.debug("Account: " + id + " --> " + account2.getAuthor());
     }
 
+    /**
+     * Create tables if not exist in the Database
+     */
     private void createTables() {
         createTableList.forEach(clazz -> {
             try {
@@ -91,5 +120,19 @@ public class DbConnector {
             }
         });
 
+    }
+
+    /**
+     * Drop tables.
+     * Warning: This is a destructive operation !!
+     */
+    private void dropTables() {
+        createTableList.forEach(clazz -> {
+            try {
+                TableUtils.dropTable(DaoManager.createDao(connection, clazz), true);
+            } catch (SQLException e) {
+                logger.error("Failed to create the table {}: {}", clazz.getSimpleName(), e.getMessage());
+            }
+        });
     }
 }
