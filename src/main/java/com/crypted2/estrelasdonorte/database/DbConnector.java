@@ -5,6 +5,7 @@ import com.crypted2.estrelasdonorte.model.*;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
+import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import org.slf4j.Logger;
@@ -55,8 +56,15 @@ public class DbConnector {
         connection.close();
     }
 
-    private <T> Dao<T, Integer> getDao() {
-        return null; // ToDo this
+    private <T> Dao<T, Integer> getDao(Class<T> clazz) {
+        Dao lookedUp = DaoManager.lookupDao(connection, clazz);
+        try {
+            return lookedUp != null ? lookedUp : DaoManager.createDao(connection, clazz);
+        } catch (SQLException e) {
+            logger.error("Unable to get Dao: {}", e.getMessage());
+        }
+
+        return null;
     }
 
     /**
@@ -76,6 +84,11 @@ public class DbConnector {
         }
 
         return true;
+    }
+
+    public <T> T read(Class<T> clazz) {
+        Dao daoToUse = getDao(clazz);
+        return null; // ToDo: continue from there
     }
 
 
