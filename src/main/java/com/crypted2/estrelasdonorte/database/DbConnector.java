@@ -5,7 +5,6 @@ import com.crypted2.estrelasdonorte.model.*;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
-import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import org.slf4j.Logger;
@@ -29,15 +28,14 @@ import java.util.Map;
  * http://ormlite.com/javadoc/ormlite-core/doc-files/ormlite_2.html#GeneratedId-Column
  */
 public class DbConnector {
-    private Logger logger = LoggerFactory.getLogger(DbConnector.class);
-    private ConnectionSource connection;
-
     private static List<Class<?>> createTableList = Arrays.asList(
             LiveConcertMusic.class,
             LiveConcertProgram.class,
             Music.class,
             UserProgram.class
     );
+    private Logger logger = LoggerFactory.getLogger(DbConnector.class);
+    private ConnectionSource connection;
 
     public DbConnector() {
 
@@ -56,6 +54,12 @@ public class DbConnector {
         connection.close();
     }
 
+    /**
+     * Get Dao from the given class (id must be an integer)
+     *
+     * @param clazz Class used to get the instance of Dao
+     * @return Instance of requested Dao
+     */
     private <T> Dao<T, Integer> getDao(Class<T> clazz) {
         Dao lookedUp = DaoManager.lookupDao(connection, clazz);
         try {
@@ -86,39 +90,64 @@ public class DbConnector {
         return true;
     }
 
-    public <T> T read(Class<T> clazz) {
-        Dao daoToUse = getDao(clazz);
-        return null; // ToDo: continue from there
+    /**
+     * Read a result from DB using some conditions
+     *
+     * @param clazz      Class representing the object to fetch
+     * @param conditions Conditions to use as filter
+     * @return List of results
+     */
+    public <T> List<T> read(Class<T> clazz, Map<String, Object> conditions) {
+        Dao daoToUse;
+        if ((daoToUse = getDao(clazz)) == null) {
+            logger.error("Unable to get Dao");
+            return null;
+        }
+
+        try {
+            return daoToUse.queryForFieldValues(conditions);
+        } catch (SQLException e) {
+            logger.error("Unable to read the result: {}", e.getMessage());
+        }
+
+        return null;
     }
 
+    /**
+     * Read a result from DB using a unique condition
+     *
+     * @param clazz Class representing the object to fetch
+     * @param field Field to use
+     * @param value Value to filter
+     * @return List of results
+     */
+    public <T> List<T> read(Class<T> clazz, String field, Object value) {
+        Map<String, Object> toQuery = new HashMap<>();
+        toQuery.put(field, value);
+        return read(clazz, toQuery);
+    }
 
-    public void doStuff() throws SQLException {
-        // instantiate the DAO to handle Account with Integer id
-        Dao<Music, Integer> accountDao = DaoManager.createDao(connection, Music.class);
+    /**
+     * Read a result from DB using the id
+     *
+     * @param clazz Class representing the object to fetch
+     * @param id    Id representing the object wanted
+     * @return Result
+     */
+    public <T> T read(Class<T> clazz, int id) {
+        Dao daoToUse;
+        if ((daoToUse = getDao(clazz)) == null) {
+            logger.error("Unable to get Dao");
+            return null;
+        }
 
-        // create an instance of Account
-        Music account = new Music(
-                "A Cabritinha",
-                "Quim Barrieros",
-                MusicGenre.PIMBA.ordinal(),
-                "LoL");
+        try {
+            return (T) daoToUse.queryForId(id);
+        } catch (SQLException e) {
+            logger.error("Unable to read the result: {}", e.getMessage());
+        }
 
-        // persist the account object to the database
-        accountDao.create(account);
-        int id = account.getId();
-
-        // retrieve the account
-        Music account2 = accountDao.queryForId(id);
-
-        Map<String, Object> toQuery = new HashMap<String, Object>();
-        toQuery.put("title", "A Cabritinha");
-
-        List<Music> account3 = accountDao.queryForFieldValues(toQuery);
-        logger.debug("LIST FOUND: " + account3.size());
-        account3.forEach(m -> logger.debug("{}", m.getId()));
-
-        // show its password
-        logger.debug("Account: " + id + " --> " + account2.getAuthor());
+        return null;
     }
 
     /**
@@ -147,5 +176,26 @@ public class DbConnector {
                 logger.error("Failed to create the table {}: {}", clazz.getSimpleName(), e.getMessage());
             }
         });
+    }
+
+    /**
+     * FixMe: To be deleted
+     */
+    public void doStuff() {
+        Music music = new Music(
+                "A Cabritinha",
+                "Quim Barrieros",
+                MusicGenre.PIMBA.ordinal(),
+                "LoL");
+
+        create(music);
+        int id = music.getId();
+        Music music2 = read(Music.class, id);
+        List<Music> music3 = read(Music.class, "title", "A Cabritinha");
+
+        logger.debug("LIST FOUND: " + music3.size());
+        music3.forEach(m -> logger.debug("{}", m.getId()));
+
+        logger.debug("Music: " + id + " --> " + music2.getAuthor());
     }
 }

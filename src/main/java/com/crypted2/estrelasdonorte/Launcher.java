@@ -18,6 +18,7 @@ public class Launcher extends Application {
 
         DbConnector dbConnector = new DbConnector();
         dbConnector.init();
+        dbConnector.doStuff();
     }
 
 
