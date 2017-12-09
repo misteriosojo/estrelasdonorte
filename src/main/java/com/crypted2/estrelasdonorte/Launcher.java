@@ -15,10 +15,6 @@ public class Launcher extends Application {
         primaryStage.setTitle("Estrelas do Norte - Manager");
         primaryStage.setScene(new Scene(root, 900, 600));
         primaryStage.show();
-
-        DbConnector dbConnector = new DbConnector();
-        dbConnector.init();
-        dbConnector.doStuff();
     }
 
 

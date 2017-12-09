@@ -22,7 +22,7 @@ public class UserProgram {
     @DatabaseField
     private String otherNotes;
 
-    UserProgram() {
+    public UserProgram() {
 
     }
 

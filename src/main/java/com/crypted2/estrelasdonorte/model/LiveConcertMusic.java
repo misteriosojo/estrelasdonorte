@@ -9,18 +9,18 @@ import lombok.Data;
 public class LiveConcertMusic {
     @DatabaseField(generatedId = true)
     private int id;
-    @DatabaseField(canBeNull = false, foreign = true)
+    @DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true)
     private Music music;
-    @DatabaseField(canBeNull = false, foreign = true)
+    @DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true)
     private UserProgram userProgram;
     @DatabaseField
     private String singer = Singer.UNKNOWN.toString();
     @DatabaseField
     private int transpose;
-    @DatabaseField(foreign = true)
+    @DatabaseField(foreign = true, foreignAutoRefresh = true)
     private LiveConcertProgram liveConcertProgram;
 
-    LiveConcertMusic() {
+    public LiveConcertMusic() {
 
     }
 }

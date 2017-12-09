@@ -14,9 +14,9 @@ public class LiveConcertProgram {
     @DatabaseField(canBeNull = false)
     private String name;
     @ForeignCollectionField
-    ForeignCollection<LiveConcertMusic> liveConcertMusics;
+    private ForeignCollection<LiveConcertMusic> liveConcertMusics;
 
-    LiveConcertProgram() {
+    public LiveConcertProgram() {
 
     }
 }

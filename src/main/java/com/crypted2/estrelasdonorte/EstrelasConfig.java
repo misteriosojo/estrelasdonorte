@@ -2,7 +2,7 @@ package com.crypted2.estrelasdonorte;
 
 public class EstrelasConfig {
     public static class Database {
-        public static final String URL = "jdbc:sqlite:"; // "jdbc:sqlite:sample.db"
+        public static final String URL = "jdbc:sqlite:database/EstrelasDoNorte.db"; // "jdbc:sqlite:sample.db"
     }
 
     public static class Pattern {
