@@ -16,7 +16,9 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-
+/**
+ * Drag & Drop in a List View: http://blog.ngopal.com.np/2012/05/06/javafx-drag-and-drop-cell-in-listview/
+ */
 public class MainController {
     private final ObservableList<LiveConcertProgram> liveConcertProgramObservableList = FXCollections.observableArrayList();
     private final ObservableList<LiveConcertMusic> liveConcertMusicObservableList = FXCollections.observableArrayList();
