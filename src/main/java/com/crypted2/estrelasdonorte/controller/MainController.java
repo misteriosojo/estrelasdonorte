@@ -8,8 +8,10 @@ import com.crypted2.estrelasdonorte.model.MusicGenre;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.text.Text;
 import javafx.util.Callback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +29,36 @@ public class MainController {
     private ListView<LiveConcertProgram> lvLiveConcertProgram;
     @FXML
     private ListView<LiveConcertMusic> lvLiveConcertMusic;
+
+    /* General info */
+    @FXML
+    private Text tGeneralMusicTitle;
+    @FXML
+    private Text tGeneralSinger;
+    @FXML
+    private Text tGeneralSingerHelper;
+    @FXML
+    private Text tGeneralTranspose;
+    @FXML
+    private Text tGeneralNotes;
+
+    /* User Program info */
+    @FXML
+    private Text tUserProgramName;
+    @FXML
+    private Text tUserProgramStyle;
+    @FXML
+    private Text tUserProgramTempo;
+    @FXML
+    private Text tUserProgramTranspose;
+    @FXML
+    private Text tUserProgramInstruments;
+    @FXML
+    private Text tUserProgramNotes;
+
+    /* Others */
+    @FXML
+    private Button bOpenPDF;
 
     /**
      * Init operations
@@ -60,7 +92,8 @@ public class MainController {
         });
 
         lvLiveConcertProgram.setOnMouseClicked(event -> {
-            System.out.println("clicked on " + lvLiveConcertProgram.getSelectionModel().getSelectedItem());
+            if(lvLiveConcertProgram.getSelectionModel().getSelectedItem() == null)
+                return;
             liveConcertMusicObservableList.setAll(lvLiveConcertProgram.getSelectionModel().getSelectedItem().getLiveConcertMusics());
             lvLiveConcertMusic.setItems(liveConcertMusicObservableList);
         });
@@ -84,11 +117,22 @@ public class MainController {
             }
         });
 
-//        lvLiveConcertMusic.setOnMouseClicked(event -> {
-//            System.out.println("clicked on " + lvLiveConcertMusic.getSelectionModel().getSelectedItem());
-//            liveConcertMusicObservableList.setAll(lvLiveConcertMusic.getSelectionModel().getSelectedItem().getLiveConcertMusics());
-//            lvLiveConcertMusic.setItems(liveConcertMusicObservableList);
-//        });
+        lvLiveConcertMusic.setOnMouseClicked(event -> {
+            LiveConcertMusic liveConcertMusic = lvLiveConcertMusic.getSelectionModel().getSelectedItem();
+            if(liveConcertMusic == null)
+                return;
+
+            tGeneralMusicTitle.setText(liveConcertMusic.getMusic().getTitle());
+            tGeneralSinger.setText(liveConcertMusic.getSinger());
+            //ToDo:            tGeneralSingerHelper.setText();
+            tGeneralTranspose.setText("" + liveConcertMusic.getTranspose());
+
+            tUserProgramName.setText(liveConcertMusic.getUserProgram().getName());
+            tUserProgramStyle.setText(liveConcertMusic.getUserProgram().getStyle());
+            tUserProgramTempo.setText("" + liveConcertMusic.getUserProgram().getTempo());
+            tUserProgramTranspose.setText((liveConcertMusic.getUserProgram().getTranspose() > 0 ? "+" : "") + liveConcertMusic.getUserProgram().getTranspose());
+            tUserProgramInstruments.setText(liveConcertMusic.getUserProgram().getInstruments());
+        });
     }
 
     /**

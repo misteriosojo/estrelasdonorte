@@ -13,7 +13,7 @@ public class Launcher extends Application {
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("/fxml/Main.fxml"));
         primaryStage.setTitle("Estrelas do Norte - Manager");
-        primaryStage.setScene(new Scene(root, 900, 600));
+        primaryStage.setScene(new Scene(root, 1024, 700));
         primaryStage.show();
     }
 
