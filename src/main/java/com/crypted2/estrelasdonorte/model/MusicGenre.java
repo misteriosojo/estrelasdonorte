@@ -9,5 +9,6 @@ public enum MusicGenre {
     KUDURO,
     KIZOMBA,
     ROCK,
-    SLOW
+    SLOW,
+    SERTANEJO
 }

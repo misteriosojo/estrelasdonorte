@@ -25,18 +25,21 @@ public class DbConnectorTest {
 
         UserProgram userProgram = new UserProgram("Meu User Program", "R0_AR0", 137, +3, "Some instruments", "");
 
+        Singer singer = new Singer("Jorge");
+
         LiveConcertMusic liveConcertMusic = new LiveConcertMusic();
         liveConcertMusic.setPosition(1);
-        liveConcertMusic.setSinger("Jorge");
+        liveConcertMusic.setSinger(singer);
         liveConcertMusic.setTranspose(+3);
         liveConcertMusic.setMusic(music);
         liveConcertMusic.setUserProgram(userProgram);
         liveConcertMusic.setLiveConcertProgram(liveConcertProgram);
 
-        DbConnector.getInstance().create(liveConcertProgram);
-        DbConnector.getInstance().create(music);
-        DbConnector.getInstance().create(userProgram);
-        DbConnector.getInstance().create(liveConcertMusic);
+        DbConnector.getInstance().createOrUpdate(liveConcertProgram);
+        DbConnector.getInstance().createOrUpdate(music);
+        DbConnector.getInstance().createOrUpdate(userProgram);
+        DbConnector.getInstance().createOrUpdate(singer);
+        DbConnector.getInstance().createOrUpdate(liveConcertMusic);
 
     }
 }

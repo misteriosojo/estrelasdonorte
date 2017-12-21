@@ -34,7 +34,8 @@ public class DbConnector {
             LiveConcertMusic.class,
             LiveConcertProgram.class,
             Music.class,
-            UserProgram.class
+            UserProgram.class,
+            Singer.class
     );
     private ConnectionSource connection;
     private static DbConnector dbConnector;
@@ -257,6 +258,25 @@ public class DbConnector {
     //**********************************************************************************************************/
 
     /**
+     * Create the item if doesn't exist. Otherwise update it
+     *
+     * @param toCreate Object to create in the Database
+     * @return True if create successfully, Else otherwise
+     */
+    public <T> boolean createOrUpdate(T toCreate) {
+        try {
+            Dao<T, Integer> dao = DaoManager.createDao(connection, (Class<T>) toCreate.getClass());
+            dao.createOrUpdate(toCreate);
+        } catch (SQLException e) {
+            logger.error("Not possible to create or update the record: {}", e.getMessage());
+            return false;
+        }
+
+        return true;
+    }
+
+
+    /**
      * Create tables if not exist in the Database
      */
     private void createTables() {
@@ -284,24 +304,4 @@ public class DbConnector {
         });
     }
 
-    /**
-     * FixMe: To be deleted
-     */
-    public void doStuff() {
-        Music music = new Music(
-                "A Cabritinha",
-                "Quim Barrieros",
-                MusicGenre.PIMBA.ordinal(),
-                "LoL");
-
-        create(music);
-        int id = music.getId();
-        Music music2 = read(Music.class, id);
-        List<Music> music3 = read(Music.class, "title", "A Cabritinha");
-
-        logger.debug("LIST FOUND: " + music3.size());
-        music3.forEach(m -> logger.debug("{}", m.getId()));
-
-        logger.debug("Music: " + id + " --> " + music2.getAuthor());
-    }
 }

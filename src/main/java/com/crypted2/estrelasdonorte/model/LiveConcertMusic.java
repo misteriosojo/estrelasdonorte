@@ -4,6 +4,8 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import lombok.Data;
 
+import java.util.Objects;
+
 @Data
 @DatabaseTable(tableName = "live_concert_music")
 public class LiveConcertMusic implements Comparable<LiveConcertMusic> {
@@ -15,8 +17,10 @@ public class LiveConcertMusic implements Comparable<LiveConcertMusic> {
     private Music music;
     @DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true)
     private UserProgram userProgram;
-    @DatabaseField
-    private String singer = Singer.UNKNOWN.toString();
+    @DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true)
+    private Singer singer;
+    @DatabaseField(foreign = true, foreignAutoRefresh = true)
+    private Singer singerHelper;
     @DatabaseField
     private int transpose;
     @DatabaseField(foreign = true, foreignAutoRefresh = true)
@@ -39,5 +43,24 @@ public class LiveConcertMusic implements Comparable<LiveConcertMusic> {
     @Override
     public int compareTo(LiveConcertMusic o) {
         return position - o.position;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        LiveConcertMusic that = (LiveConcertMusic) o;
+        return getTranspose() == that.getTranspose() &&
+                Objects.equals(getMusic(), that.getMusic()) &&
+                Objects.equals(getUserProgram(), that.getUserProgram()) &&
+                Objects.equals(getSinger(), that.getSinger()) &&
+                Objects.equals(getSingerHelper(), that.getSingerHelper());
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(super.hashCode(), getMusic(), getUserProgram(), getSinger(), getSingerHelper(), getTranspose());
     }
 }

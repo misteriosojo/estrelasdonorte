@@ -20,7 +20,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox maxWidth="-Infinity" prefHeight="700.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.crypted2.estrelasdonorte.controller.MainController">
+<VBox maxWidth="-Infinity" prefHeight="700.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.crypted2.estrelasdonorte.controller.MainController">
     <children>
         <MenuBar VBox.vgrow="NEVER">
             <menus>
@@ -148,7 +148,7 @@
                         <Text fx:id="tUserProgramNotes" strokeType="OUTSIDE" strokeWidth="0.0" text="&lt;Null&gt;" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                      </children>
                   </GridPane>
-                  <Button fx:id="bOpenPDF" alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="325.0" layoutY="32.0" mnemonicParsing="false" text="Open PDF" />
+                  <Button fx:id="bOpenPDF" alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="305.0" layoutY="32.0" mnemonicParsing="false" text="Open PDF" />
                </children>
                 </AnchorPane>
             </items>

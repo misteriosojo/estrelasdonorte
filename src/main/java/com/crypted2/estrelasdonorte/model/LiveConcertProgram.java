@@ -6,6 +6,8 @@ import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 import lombok.Data;
 
+import java.util.Objects;
+
 @Data
 @DatabaseTable(tableName = "live_concert_program")
 public class LiveConcertProgram {
@@ -18,5 +20,20 @@ public class LiveConcertProgram {
 
     public LiveConcertProgram() {
 
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        LiveConcertProgram that = (LiveConcertProgram) o;
+        return Objects.equals(getName(), that.getName());
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(super.hashCode(), getName());
     }
 }

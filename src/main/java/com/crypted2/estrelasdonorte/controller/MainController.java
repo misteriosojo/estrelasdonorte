@@ -123,7 +123,7 @@ public class MainController {
                 return;
 
             tGeneralMusicTitle.setText(liveConcertMusic.getMusic().getTitle());
-            tGeneralSinger.setText(liveConcertMusic.getSinger());
+            tGeneralSinger.setText(liveConcertMusic.getSinger().getName());
             //ToDo:            tGeneralSingerHelper.setText();
             tGeneralTranspose.setText("" + liveConcertMusic.getTranspose());
 

@@ -4,6 +4,8 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import lombok.Data;
 
+import java.util.Objects;
+
 @Data
 @DatabaseTable(tableName = "music")
 public class Music {
@@ -29,4 +31,20 @@ public class Music {
         this.pdfFileName = pdfFileName;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Music music = (Music) o;
+        return getGenre() == music.getGenre() &&
+                Objects.equals(getTitle(), music.getTitle()) &&
+                Objects.equals(getAuthor(), music.getAuthor());
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(super.hashCode(), getTitle(), getAuthor(), getGenre());
+    }
 }
