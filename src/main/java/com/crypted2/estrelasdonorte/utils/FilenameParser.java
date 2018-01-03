@@ -5,7 +5,7 @@ import java.io.File;
 public class FilenameParser {
 
     public static void main(String[] args) {
-        String path = "D:\\Dropbox\\EstrelasDoNorte\\Testi_iPad\\docx_keyboard_E80";
+        String path = "D:\\Dropbox\\EstrelasDoNorte\\Testi_iPad\\Testi_KetronSD9\\docx";
 
         File folder = new File(path);
         File[] listOfFiles = folder.listFiles();
